@@ -1,0 +1,31 @@
+resources:
+  jobs:
+    cinedata_pipeline:
+      name: cinedata_pipeline
+      schedule:
+        quartz_cron_expression: 28 0 3 * * ?
+        timezone_id: America/Sao_Paulo
+        pause_status: UNPAUSED
+      tasks:
+        - task_key: to_Bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/baltaz.samuel@gmail.com/Atividade2/Bronze
+            base_parameters:
+              data_inicio: 10-09-2026
+              data_fim: 16-09-2026
+            source: WORKSPACE
+        - task_key: to_Silver
+          depends_on:
+            - task_key: to_Bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/baltaz.samuel@gmail.com/Atividade2/toSilver
+            source: WORKSPACE
+        - task_key: to_Gold
+          depends_on:
+            - task_key: to_Silver
+          notebook_task:
+            notebook_path: /Workspace/Users/baltaz.samuel@gmail.com/Atividade2/toGold
+            source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
